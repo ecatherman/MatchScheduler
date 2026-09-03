@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CathermanCore/CathermanCore.csproj" />
+  <Project Path="MatchScheduler/MatchScheduler.csproj" />
+</Solution>
