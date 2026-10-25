@@ -1,6 +1,0 @@
-[submodule "MatchScheduler/CathermanEntityFramework"]
-	path = MatchScheduler/CathermanEntityFramework
-	url = https://github.com/ecatherman/CathermanEntityFramework.git
-[submodule "CathermanEntityFramework"]
-	path = CathermanEntityFramework
-	url = https://github.com/ecatherman/CathermanEntityFramework.git
