@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CathermanCore\CathermanCore.csproj" />
+    <ProjectReference Include="..\CathermanCore\CathermanCore.EntityFramework\CathermanCore.EntityFramework.csproj" />
+    <ProjectReference Include="..\CathermanCore\CathermanCore\CathermanCore.csproj" />
   </ItemGroup>
 
 </Project>
