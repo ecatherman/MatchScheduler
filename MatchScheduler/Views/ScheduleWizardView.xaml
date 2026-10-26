@@ -1,0 +1,189 @@
+<UserControl x:Class="MatchScheduler.Views.ScheduleWizardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="New schedule" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="{Binding StepTitle}" Style="{StaticResource Muted}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,16,0,0">
+
+            <!-- Step 1: session setup -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding IsStep1, Converter={StaticResource BoolToVis}}">
+                <Border Style="{StaticResource Card}" MaxWidth="780" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <StackPanel>
+                        <TextBlock Text="Schedule name" Style="{StaticResource FieldLabel}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding ScheduleName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <UniformGrid Columns="3">
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Date" Style="{StaticResource FieldLabel}"/>
+                                <DatePicker SelectedDate="{Binding EventDate}"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Starts" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding TimeOptions}"
+                                          DisplayMemberPath="Label" SelectedValuePath="Value"
+                                          SelectedValue="{Binding StartTime}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Ends" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding TimeOptions}"
+                                          DisplayMemberPath="Label" SelectedValuePath="Value"
+                                          SelectedValue="{Binding EndTime}"/>
+                            </StackPanel>
+                        </UniformGrid>
+
+                        <UniformGrid Columns="3">
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Length of each time slot" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding SlotOptions}" ItemStringFormat="{}{0} minutes"
+                                          SelectedItem="{Binding SlotMinutes}"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,12,0">
+                                <TextBlock Text="Number of courts" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding CourtOptions}"
+                                          SelectedItem="{Binding CourtCount}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Ideal players per team" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding TeamSizeOptions}" ItemStringFormat="{}{0} players"
+                                          SelectedItem="{Binding TeamSize}"/>
+                            </StackPanel>
+                        </UniformGrid>
+
+                        <TextBlock Text="{Binding SetupSummary}" Style="{StaticResource Muted}"
+                                   TextWrapping="Wrap" Margin="0,18,0,0"/>
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+
+            <!-- Step 2: players -->
+            <Grid Visibility="{Binding IsStep2, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Width="240" Margin="0,0,12,0"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Search players by name"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Select all shown" Command="{Binding SelectAllCommand}"/>
+                        <Button Content="Clear" Command="{Binding ClearSelectionCommand}"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+                               FontWeight="SemiBold">
+                        <Run Text="{Binding SelectedCount, Mode=OneWay}"/><Run Text=" selected"/>
+                    </TextBlock>
+                </Grid>
+
+                <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,12,0,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PlayersView}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Style="{StaticResource PlayerChip}"
+                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                  ToolTip="{Binding ToolTipText}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding PositionShort}" Margin="6,0,0,0"
+                                                       FontSize="12" Opacity="0.65" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </ToggleButton>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- Quick add: type a name, press Enter -->
+                <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,12,0,0" Padding="14">
+                    <StackPanel>
+                        <TextBlock Text="Someone new? Type a name and press Enter. They're saved and selected."
+                                   Style="{StaticResource Muted}" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Width="240" Margin="0,0,8,0"
+                                     Text="{Binding QuickAddName, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding QuickAddCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <ComboBox Width="190" Margin="0,0,8,0"
+                                      ItemsSource="{Binding PositionOptions}"
+                                      DisplayMemberPath="Label" SelectedValuePath="Value"
+                                      SelectedValue="{Binding QuickAddPosition}"/>
+                            <Button Content="Add" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding QuickAddCommand}"/>
+                            <Button Content="Add with phone / email…" Command="{Binding AddWithDetailsCommand}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Row="3" Margin="0,10,0,0">
+                    <TextBlock Text="{Binding FitSummary}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding PlayerStatus}" Style="{StaticResource Muted}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Step 3: the schedule -->
+            <Grid Visibility="{Binding IsStep3, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="{Binding ResultSummary}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Shuffle again" Command="{Binding RegenerateCommand}"/>
+                        <Button Content="Copy as text" Command="{Binding CopyTextCommand}"/>
+                        <Button Content="Save schedule" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding SaveCommand}"/>
+                        <TextBlock Text="{Binding ResultStatus}" Style="{StaticResource Muted}"
+                                   VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" Margin="0,12,0,0" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Rounds}" ItemTemplate="{StaticResource RoundTemplate}"/>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="{StaticResource ErrorBrush}"
+                   TextWrapping="Wrap" Margin="0,10,0,0"
+                   Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="Back" Command="{Binding BackCommand}"
+                    Visibility="{Binding ShowBack, Converter={StaticResource BoolToVis}}"/>
+            <Button Content="{Binding NextLabel}" Style="{StaticResource PrimaryButton}"
+                    Command="{Binding NextCommand}" Margin="0"
+                    Visibility="{Binding ShowNext, Converter={StaticResource BoolToVis}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

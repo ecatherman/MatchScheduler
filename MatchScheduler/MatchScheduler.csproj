@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,7 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>VolleyballScheduler</AssemblyName>
+    <RootNamespace>MatchScheduler</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The SQLite provider is the only package this app adds; BaseContext itself is provider-agnostic. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CathermanCore\CathermanCore.EntityFramework\CathermanCore.EntityFramework.csproj" />
