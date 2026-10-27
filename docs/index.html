@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Volleyball Scheduler</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 4rem auto; padding: 0 1rem; color: #0f172a; }
+    a.button { display: inline-block; background: #2563eb; color: #fff; padding: .75rem 1.25rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    .muted { color: #64748b; }
+  </style>
+</head>
+<body>
+  <h1>🏐 Volleyball Scheduler</h1>
+  <p>Build a rotating volleyball schedule for a big group in a couple of minutes.</p>
+  <p><a class="button" href="https://github.com/ecatherman/MatchScheduler/releases/latest/download/VolleyballScheduler-win-x64.exe">Download for Windows</a></p>
+  <p class="muted" id="version"></p>
+  <p class="muted">Windows may show a "protected your PC" warning because the app isn't code-signed. Choose More info, then Run anyway.</p>
+  <p><a href="https://github.com/ecatherman/MatchScheduler/releases">All releases and release notes</a></p>
+
+  <script>
+    fetch('https://api.github.com/repos/ecatherman/MatchScheduler/releases/latest')
+      .then(r => r.ok ? r.json() : null)
+      .then(r => { if (r) document.getElementById('version').textContent =
+        'Latest: ' + r.tag_name + ' (' + new Date(r.published_at).toLocaleDateString() + ')'; });
+  </script>
+</body>
+</html>
